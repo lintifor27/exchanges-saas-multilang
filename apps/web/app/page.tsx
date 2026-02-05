@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import useSWR from 'swr';
-import { useLocale } from '../components/LocaleContext';
+// Import useLocale from the app/components directory
+import { useLocale } from './components/LocaleContext';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
