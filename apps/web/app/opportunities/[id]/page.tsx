@@ -1,6 +1,7 @@
 'use client';
 import useSWR from 'swr';
-import { useLocale } from '../../components/LocaleContext';
+// Adjust import path to locate LocaleContext from the root components directory
+import { useLocale } from '../../../components/LocaleContext';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
