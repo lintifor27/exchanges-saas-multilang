@@ -1,6 +1,7 @@
 import './globals.css';
 import { ReactNode } from 'react';
-import { LocaleProvider } from '../components/LocaleContext';
+// Import LocaleProvider from the new location within app/components
+import { LocaleProvider } from './components/LocaleContext';
 import LocaleSwitcher from '../components/LocaleSwitcher';
 import Header from '../components/Header';
 
