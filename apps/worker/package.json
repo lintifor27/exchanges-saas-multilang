@@ -1,0 +1,24 @@
+{
+  "name": "exchanges-worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "dev": "ts-node -r tsconfig-paths/register src/main.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "ccxt": "^4.1.89",
+    "ioredis": "^5.3.2",
+    "@redis/client": "^1.5.5",
+    "bullmq": "^4.8.2",
+    "pino": "^8.0.0"
+    ,"@exchanges/util": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^4.1.0"
+  }
+}

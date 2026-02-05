@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User accounts with roles
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  reviews   Review[]
+  alerts    Alert[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  USER
+}
+
+// Exchange registry
+model Exchange {
+  id            String    @id @default(uuid())
+  name          String
+  slug          String    @unique
+  logoUrl       String
+  ccxtId        String
+  regions       String[]
+  makerFee      Float?
+  takerFee      Float?
+  withdrawNetworks String[]
+  p2pSupported  Boolean   @default(false)
+  scannerEnabled Boolean  @default(true)
+  p2pAdapter    String?   // enum string referencing adapter name
+  scannerConfig Json?
+  markets       Market[]
+  reviews       Review[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Markets per exchange
+model Market {
+  id         String   @id @default(uuid())
+  exchange   Exchange @relation(fields: [exchangeId], references: [id])
+  exchangeId String
+  symbol     String
+  base       String
+  quote      String
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([exchangeId, symbol])
+}
+
+// Reviews of exchanges
+model Review {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  exchange   Exchange @relation(fields: [exchangeId], references: [id])
+  exchangeId String
+  rating     Int
+  comment    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// Generic opportunities (spot, tri, p2p)
+model Opportunity {
+  id         String    @id @default(uuid())
+  type       OpportunityType
+  details    Json
+  createdAt  DateTime  @default(now())
+  @@index([type, createdAt])
+}
+
+enum OpportunityType {
+  CEX
+  TRI
+  P2P
+}
+
+// Alerts configured by users
+model Alert {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  type       OpportunityType
+  threshold  Float
+  params     Json
+  active     Boolean @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

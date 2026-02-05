@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: exchanges-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-saas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saaspass}
+      POSTGRES_DB: ${POSTGRES_DB:-exchanges}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-saas}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: exchanges-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: exchanges-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-saas}:${POSTGRES_PASSWORD:-saaspass}@postgres:5432/${POSTGRES_DB:-exchanges}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3001:3001"
+    command: ["sh", "-c", "npx prisma migrate deploy && npx ts-node prisma/seed.ts && node dist/main.js"]
+    volumes:
+      - ./.env:/usr/src/app/.env:ro
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: exchanges-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    env_file: .env
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    ports:
+      - "3000:3000"
+    command: ["npm", "run", "start"]
+
+  worker:
+    build:
+      context: ./apps/worker
+      dockerfile: Dockerfile
+    container_name: exchanges-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-saas}:${POSTGRES_PASSWORD:-saaspass}@postgres:5432/${POSTGRES_DB:-exchanges}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SCAN_INTERVAL: ${SCAN_INTERVAL:-10}
+    command: ["npm", "run", "start"]
+
+volumes:
+  postgres-data:
+  redis-data:
