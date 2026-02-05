@@ -6,7 +6,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@exchanges/util": "workspace:*"
+    "@exchanges/util": "0.1.0"
   },
   "devDependencies": {
     "jest": "^29.0.0",
