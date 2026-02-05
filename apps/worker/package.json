@@ -14,7 +14,7 @@
     "@redis/client": "^1.5.5",
     "bullmq": "^4.8.2",
     "pino": "^8.0.0"
-    ,"@exchanges/util": "workspace:*"
+    ,"@exchanges/util": "0.1.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
