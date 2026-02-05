@@ -1,6 +1,10 @@
 {
   "name": "exchanges-saas-monorepo",
   "private": true,
+  "packageManager": "npm@9.7.2",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
     "apps/web",
     "apps/api",
