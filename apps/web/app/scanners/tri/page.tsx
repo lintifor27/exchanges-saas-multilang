@@ -1,7 +1,7 @@
 'use client';
 import useSWR from 'swr';
 import { useEffect, useState } from 'react';
-import { useLocale } from '../../components/LocaleContext';
+import { useLocale } from '../..././components/LocaleContext';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
