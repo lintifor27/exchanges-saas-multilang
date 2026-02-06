@@ -1,9 +1,10 @@
 'use client';
 import useSWR from 'swr';
-// Adjust import path to locate LocaleContext from the root components directory
+// Adjus// Adjust import path to use LocaleContext from app/components directory
+
 import { useLocale } from '../../../components/LocaleContext';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const apiUrl = process.env.NEXT../../components/LocaleContextlhost:3001';
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function OpportunityPage({ params }: { params: { id: string } }) {
