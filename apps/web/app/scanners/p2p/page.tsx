@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 // Adjust import path to locate LocaleContext from the root components directory
 import { useLocale } from '../../../components/LocaleContext';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ||
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function P2PScannerPage() {
